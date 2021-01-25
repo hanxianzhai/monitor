@@ -1,0 +1,25 @@
+global:
+  resolve_timeout: 10m
+  wechat_api_url: 'https://qyapi.weixin.qq.com/cgi-bin/'
+  wechat_api_corp_id: '企业id，在企业的配置页面可以看到'
+templates:
+- '/usr/local/alertmanager/config/*.tmpl'
+route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  routes:
+  - receiver: 'wechat'
+    continue: true
+inhibit_rules:
+- source_match:
+receivers:
+- name: 'wechat'
+  wechat_configs:
+  - send_resolved: true
+    to_user: '@all'
+    to_party: ' PartyID1 | PartyID2 '
+    message: '{{ template "wechat.default.message" . }}'
+    agent_id: '应用的AgentId，在应用的配置页面可以看到'
+    api_secret: '应用的secret，在应用的配置页面可以看到'
